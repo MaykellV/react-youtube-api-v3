@@ -3,11 +3,15 @@ import VideoListItem from './video_list_item';
 
 const VideoList = (props) => {
 
-
+    // map in list of videos and return component VideoListItem that represents unique video.
     const videoItens =  props.videos.map(((video) => {
-        return <VideoListItem  key={video.etag} video={video} />
+        return <VideoListItem  
+        onVideoSelected = {props.onVideoSelected}
+        key={video.etag} 
+        video={video} />
     }));
 
+    //return list of videos laters.
     return (
         <ul className="col-md-4 list-group">
             { videoItens }

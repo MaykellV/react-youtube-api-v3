@@ -1,7 +1,7 @@
+import _ from 'lodash';
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import YTSearch from 'youtube-api-search';
-
 import SearchBar from './components/search_bar';
 import VideoList from './components/video_list';
 import VideoDetail from './components/video_detail';
@@ -14,20 +14,38 @@ class App extends Component {
     constructor(props){
         super(props);
 
-        this.state = { videos: [] };
+        // Atribuindo a state o array de videos e o video selecionado
+        this.state = { 
+            videos: [],
+            selectedVideo: null
+        };
 
-        YTSearch({key: API_KEY, term: 'Crossfire'}, (videos) => {
-            this.setState({ videos });
+        this.videoSearch('surfboards')
+    }
+
+    // Realizando consulta na API do Youtube
+    videoSearch(term) {
+        YTSearch({key: API_KEY, term: term}, (videos) => {
+            this.setState({ 
+                videos: videos,
+                selectedVideo: videos[0]
+            });
         });
-
     }
 
     render() {
+
+        const videoSearch = _.debounce((term) => { this.videoSearch(term) }, 300);
+         
+        // A funcao onVideoSelected retornara o video selecionado
         return (
             <div>
-                <SearchBar />
-                <VideoDetail video={ this.state.videos[0] } />
-                <VideoList videos= { this.state.videos } />
+                <SearchBar onSearchTermChange={term => this.videoSearch(term)}/> 
+                <VideoDetail video={ this.state.selectedVideo } /> 
+                <VideoList 
+                    onVideoSelected = {selectedVideo => this.setState({ selectedVideo })} 
+                    videos= { this.state.videos }  
+                    /> 
             </div>
         );
     }
